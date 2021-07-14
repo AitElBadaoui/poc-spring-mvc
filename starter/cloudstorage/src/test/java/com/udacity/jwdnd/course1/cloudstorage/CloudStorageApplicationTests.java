@@ -7,8 +7,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
+	private SignUpPage signup;
+	private LoginPage login;
+	private HomePage homePage;
 
 	@LocalServerPort
 	private int port;
@@ -31,6 +36,23 @@ class CloudStorageApplicationTests {
 			driver.quit();
 		}
 	}
+	@Test
+	void testAuthenticationProcess() {
+		driver.get("http://localhost:"+port+"/signup");
+		signup = new SignUpPage(driver);
+		signup.signup("az", "az", "az", "az");
+
+		driver.get("http://localhost:"+port+"/login");
+		login = new LoginPage(driver);
+		login.login("az", "az");
+		assertEquals("http://localhost:"+port+"/home", driver.getCurrentUrl());
+
+		homePage = new HomePage(driver);
+		homePage.logout();
+		assertEquals("http://localhost:"+port+"/login?logout", driver.getCurrentUrl());
+
+	}
+
 
 	@Test
 	public void getLoginPage() {
