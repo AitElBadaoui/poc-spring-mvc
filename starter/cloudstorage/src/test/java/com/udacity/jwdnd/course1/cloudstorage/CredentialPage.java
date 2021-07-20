@@ -65,7 +65,7 @@ public class CredentialPage {
         credentialSubmitButton.submit();
     }
 
-    public void editCredential(String url, String username, String password) throws InterruptedException {
+    public void editCredential(String url, String username, String password){
         jsExec.executeScript("arguments[0].click();",credentialNavButton);
         jsExec.executeScript("arguments[0].click();",credentialEditButton);
         jsExec.executeScript("arguments[0].value='" + url + "';", inputUrl);

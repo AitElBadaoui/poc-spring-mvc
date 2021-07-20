@@ -32,5 +32,7 @@ public class CredentialService {
         return this.credentialMapper.deleteCredential(credentialId);
     }
 
-
+    public Credential getLastElement(){
+        return this.credentialMapper.getLastCredential();
+    }
 }

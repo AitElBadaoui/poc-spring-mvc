@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,7 +52,7 @@ public class CredentialTests {
 
     @Test
     @Order(1)
-    public void testCreatingCredential() {
+    public void testCreatingCredential() throws InterruptedException {
         //Create the user that will be used in these tests
         driver.get("http://localhost:"+port+"/signup");
         signup = new SignUpPage(driver);
@@ -62,7 +63,6 @@ public class CredentialTests {
         login = new LoginPage(driver);
         login.login(username, password);
 
-        encryptionService = new EncryptionService();
         driver.get("http://localhost:"+port+"/home");
         credentialPage = new CredentialPage(driver);
         credentialPage.openModal();
@@ -70,7 +70,10 @@ public class CredentialTests {
         assertEquals("The credential was successfully added !", credentialPage.getSuccessMessage());
         assertEquals("www.google.com", credentialPage.getCredentialUrlText());
         assertEquals("Norbox", credentialPage.getCredentialUsernameText());
-        Credential credential = credentialService.getCredentialsById(1);
+        Thread.sleep(3000);
+        Credential credential = credentialService.getLastElement();
+        System.out.println(credentialPage.getCredentialPasswordText());
+        System.out.println(credential);
         assertEquals("12345", this.encryptionService.decryptValue(credentialPage.getCredentialPasswordText(),credential.getKey()));
     }
 
@@ -83,7 +86,7 @@ public class CredentialTests {
         assertEquals("The credential was successfully edited !", credentialPage.getSuccessMessage());
         assertEquals("www.facebook.com", credentialPage.getCredentialUrlText());
         assertEquals("Sasuke", credentialPage.getCredentialUsernameText());
-        Credential credential = credentialService.getCredentialsById(1);
+        Credential credential = credentialService.getLastElement();
         assertEquals("Pasta:", this.encryptionService.decryptValue(credentialPage.getCredentialPasswordText(),credential.getKey()));
     }
 
